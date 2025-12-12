@@ -8,6 +8,7 @@ import { TimeEntry } from './TimeEntry';
 import { StatDisplay } from './StatDisplay';
 import { ResetModal } from './ResetModal';
 import { HeistPresets } from './HeistPresets';
+import { HeistHistoryCard } from './HeistHistoryCard';
 import { Input } from '@/components/ui/input';
 
 export const HeistTimer = () => {
@@ -32,6 +33,8 @@ export const HeistTimer = () => {
     reset,
     setHeistName,
     formatTime,
+    exportHeistData,
+    importHeistData,
   } = useHeistTimer();
 
   const status = useMemo(() => {
@@ -193,33 +196,12 @@ export const HeistTimer = () => {
                 variant="warning"
               />
             </div>
-            <div className="space-y-2 max-h-40 overflow-y-auto">
-              {heistTimes.length > 0 ? (
-                heistTimes.map((entry) => (
-                  <div 
-                    key={entry.id}
-                    className="p-3 rounded-lg bg-success/10 border border-success/20"
-                  >
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="font-medium text-foreground truncate max-w-[140px]">
-                        {entry.name}
-                      </span>
-                      <span className="font-mono font-bold text-success">
-                        {entry.formattedTotal}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>Setup: {entry.formattedSetup}</span>
-                      <span>Heist: {entry.formattedHeist}</span>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-center text-sm text-muted-foreground py-4">
-                  No heists completed
-                </p>
-              )}
-            </div>
+            <HeistHistoryCard
+              heistTimes={heistTimes}
+              formatTime={formatTime}
+              onExport={exportHeistData}
+              onImport={importHeistData}
+            />
           </TimeCard>
         </div>
       </div>

@@ -20,6 +20,8 @@ export interface HeistEntry {
   formattedHeist: string;
   formattedTotal: string;
   timestamp: number;
+  setupDetails: SetupEntry[];
+  failedSetups: SetupEntry[];
 }
 
 interface TimerState {
@@ -206,6 +208,8 @@ export const useHeistTimer = () => {
       formattedHeist: formatTimeShort(heistDuration),
       formattedTotal: formatTimeShort(totalTime),
       timestamp: Date.now(),
+      setupDetails: [...state.setupTimes],
+      failedSetups: [...state.failedSetupTimes],
     };
 
     setState(prev => ({
@@ -214,7 +218,7 @@ export const useHeistTimer = () => {
       heistTimes: [newHeist, ...prev.heistTimes],
       heistPhaseTime: heistDuration,
     }));
-  }, [state.currentPhase, state.heistName, state.setupElapsedTotal]);
+  }, [state.currentPhase, state.heistName, state.setupElapsedTotal, state.setupTimes, state.failedSetupTimes]);
 
   const reset = useCallback((full = false) => {
     if (intervalRef.current) {
@@ -272,6 +276,39 @@ export const useHeistTimer = () => {
     return Math.min((time / maxTime) * 100, 100);
   };
 
+  const exportHeistData = useCallback(() => {
+    const exportData = {
+      version: '2.0',
+      exportedAt: new Date().toISOString(),
+      heists: state.heistTimes,
+    };
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `heist-times-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [state.heistTimes]);
+
+  const importHeistData = useCallback((file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target?.result as string);
+        if (data.heists && Array.isArray(data.heists)) {
+          setState(prev => ({
+            ...prev,
+            heistTimes: [...data.heists, ...prev.heistTimes],
+          }));
+        }
+      } catch (error) {
+        console.error('Failed to import heist data:', error);
+      }
+    };
+    reader.readAsText(file);
+  }, []);
+
   return {
     ...state,
     displayTime: getDisplayTime(),
@@ -283,5 +320,7 @@ export const useHeistTimer = () => {
     reset,
     setHeistName,
     formatTime: formatTimeShort,
+    exportHeistData,
+    importHeistData,
   };
 };
