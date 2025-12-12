@@ -1,0 +1,234 @@
+import { useState, useMemo } from 'react';
+import { Timer, XCircle, BarChart3, Target } from 'lucide-react';
+import { useHeistTimer } from '@/hooks/useHeistTimer';
+import { TimerCircle } from './TimerCircle';
+import { TimerControls } from './TimerControls';
+import { TimeCard } from './TimeCard';
+import { TimeEntry } from './TimeEntry';
+import { StatDisplay } from './StatDisplay';
+import { ResetModal } from './ResetModal';
+import { Input } from '@/components/ui/input';
+
+export const HeistTimer = () => {
+  const [resetModalOpen, setResetModalOpen] = useState(false);
+  
+  const {
+    currentPhase,
+    displayTime,
+    progress,
+    heistName,
+    setupTimes,
+    heistTimes,
+    failedSetupTimes,
+    setupElapsedTotal,
+    failedElapsedTotal,
+    heistPhaseTime,
+    currentSetupTime,
+    startSetup,
+    completeSetup,
+    startHeist,
+    completeHeist,
+    reset,
+    setHeistName,
+    formatTime,
+  } = useHeistTimer();
+
+  const status = useMemo(() => {
+    switch (currentPhase) {
+      case 'ready': return 'Ready';
+      case 'setup': return 'Setup in Progress';
+      case 'heist-ready': return 'Ready for Heist';
+      case 'heist': return 'Heist Active';
+      case 'complete': return 'Heist Complete';
+      default: return 'Ready';
+    }
+  }, [currentPhase]);
+
+  const handleReset = () => {
+    setResetModalOpen(true);
+  };
+
+  const confirmReset = () => {
+    reset(false);
+    setResetModalOpen(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-background p-4 md:p-8">
+      {/* Header */}
+      <header className="text-center mb-8 animate-fade-in">
+        <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary via-primary/80 to-accent bg-clip-text text-transparent mb-2">
+          Career Challenges
+        </h1>
+        <p className="text-muted-foreground">Heist Timer & Progress Tracker</p>
+      </header>
+
+      <div className="max-w-6xl mx-auto grid gap-6 lg:grid-cols-3">
+        {/* Main Timer Card */}
+        <div className="lg:col-span-2 glass rounded-2xl p-6 md:p-8 animate-scale-in">
+          <div className="flex items-center gap-3 mb-6">
+            <Timer className="w-6 h-6 text-primary" />
+            <h2 className="text-xl font-semibold">Heist Timer</h2>
+            <span className={`ml-auto px-3 py-1 rounded-full text-xs font-medium ${
+              currentPhase === 'ready' ? 'bg-muted text-muted-foreground' :
+              currentPhase === 'setup' ? 'bg-primary/20 text-primary' :
+              currentPhase === 'heist-ready' ? 'bg-warning/20 text-warning' :
+              currentPhase === 'heist' ? 'bg-destructive/20 text-destructive' :
+              'bg-success/20 text-success'
+            }`}>
+              {status}
+            </span>
+          </div>
+
+          {/* Heist Name Input */}
+          <div className="mb-8">
+            <Input
+              type="text"
+              placeholder="Enter heist name..."
+              value={heistName}
+              onChange={(e) => setHeistName(e.target.value)}
+              className="bg-secondary/50 border-border/50 focus:border-primary text-center text-lg"
+            />
+          </div>
+
+          {/* Timer Display */}
+          <div className="flex justify-center mb-8">
+            <TimerCircle
+              displayTime={displayTime}
+              progress={progress}
+              phase={currentPhase}
+              status={status}
+            />
+          </div>
+
+          {/* Controls */}
+          <div className="flex justify-center">
+            <TimerControls
+              phase={currentPhase}
+              onStartSetup={startSetup}
+              onCompleteSetup={completeSetup}
+              onStartHeist={startHeist}
+              onCompleteHeist={completeHeist}
+              onReset={handleReset}
+            />
+          </div>
+        </div>
+
+        {/* Side Panel */}
+        <div className="flex flex-col gap-6">
+          {/* Failed Setups */}
+          <TimeCard icon={<XCircle className="w-5 h-5 text-destructive" />} title="Failed Setups">
+            <StatDisplay 
+              label="Total Failed Time" 
+              value={failedElapsedTotal > 0 ? formatTime(failedElapsedTotal) : '--:--'}
+              variant="destructive"
+            />
+            <div className="mt-4 space-y-2 max-h-32 overflow-y-auto">
+              {failedSetupTimes.length > 0 ? (
+                failedSetupTimes.map((entry) => (
+                  <TimeEntry
+                    key={entry.id}
+                    time={entry.formatted}
+                    name={entry.name}
+                    variant="failed"
+                  />
+                ))
+              ) : (
+                <p className="text-center text-sm text-muted-foreground py-4">
+                  No failed setups
+                </p>
+              )}
+            </div>
+          </TimeCard>
+
+          {/* Setup Times */}
+          <TimeCard icon={<BarChart3 className="w-5 h-5 text-primary" />} title="Setup Times">
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <StatDisplay 
+                label="Current" 
+                value={currentPhase === 'setup' ? formatTime(currentSetupTime) : 
+                       setupTimes[0]?.formatted || '--:--'}
+                variant="primary"
+              />
+              <StatDisplay 
+                label="Total" 
+                value={setupElapsedTotal > 0 ? formatTime(setupElapsedTotal) : '--:--'}
+              />
+            </div>
+            <div className="space-y-2 max-h-32 overflow-y-auto">
+              {setupTimes.length > 0 ? (
+                setupTimes.map((entry) => (
+                  <TimeEntry
+                    key={entry.id}
+                    time={entry.formatted}
+                    name={entry.name}
+                  />
+                ))
+              ) : (
+                <p className="text-center text-sm text-muted-foreground py-4">
+                  No setups recorded
+                </p>
+              )}
+            </div>
+          </TimeCard>
+
+          {/* Heist Times */}
+          <TimeCard icon={<Target className="w-5 h-5 text-success" />} title="Heist Times">
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <StatDisplay 
+                label="Total" 
+                value={heistTimes[0]?.formattedTotal || '--:--'}
+                variant="success"
+              />
+              <StatDisplay 
+                label="Heist Phase" 
+                value={currentPhase === 'heist' ? formatTime(heistPhaseTime) : 
+                       heistTimes[0]?.formattedHeist || '--:--'}
+                variant="warning"
+              />
+            </div>
+            <div className="space-y-2 max-h-40 overflow-y-auto">
+              {heistTimes.length > 0 ? (
+                heistTimes.map((entry) => (
+                  <div 
+                    key={entry.id}
+                    className="p-3 rounded-lg bg-success/10 border border-success/20"
+                  >
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="font-medium text-foreground truncate max-w-[140px]">
+                        {entry.name}
+                      </span>
+                      <span className="font-mono font-bold text-success">
+                        {entry.formattedTotal}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>Setup: {entry.formattedSetup}</span>
+                      <span>Heist: {entry.formattedHeist}</span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-center text-sm text-muted-foreground py-4">
+                  No heists completed
+                </p>
+              )}
+            </div>
+          </TimeCard>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="text-center mt-8 text-sm text-muted-foreground animate-fade-in">
+        <p>Career Challenges Heist Timer v2.0</p>
+      </footer>
+
+      {/* Reset Confirmation Modal */}
+      <ResetModal
+        open={resetModalOpen}
+        onOpenChange={setResetModalOpen}
+        onConfirm={confirmReset}
+      />
+    </div>
+  );
+};
