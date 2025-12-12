@@ -7,6 +7,7 @@ import { TimeCard } from './TimeCard';
 import { TimeEntry } from './TimeEntry';
 import { StatDisplay } from './StatDisplay';
 import { ResetModal } from './ResetModal';
+import { HeistPresets } from './HeistPresets';
 import { Input } from '@/components/ui/input';
 
 export const HeistTimer = () => {
@@ -81,7 +82,7 @@ export const HeistTimer = () => {
           </div>
 
           {/* Heist Name Input */}
-          <div className="mb-8">
+          <div className="mb-6">
             <Input
               type="text"
               placeholder="Enter heist name..."
@@ -89,6 +90,11 @@ export const HeistTimer = () => {
               onChange={(e) => setHeistName(e.target.value)}
               className="bg-secondary/50 border-border/50 focus:border-primary text-center text-lg"
             />
+          </div>
+
+          {/* Heist Presets */}
+          <div className="mb-8">
+            <HeistPresets onSelectName={setHeistName} />
           </div>
 
           {/* Timer Display */}
