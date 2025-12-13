@@ -1,6 +1,8 @@
-import { useState, useMemo } from 'react';
-import { Timer, XCircle, BarChart3, Target } from 'lucide-react';
+import { useState, useMemo, useEffect } from 'react';
+import { Timer, XCircle, BarChart3, Target, Maximize, Minimize, Volume2, VolumeX } from 'lucide-react';
 import { useHeistTimer } from '@/hooks/useHeistTimer';
+import { useAudioFeedback } from '@/hooks/useAudioFeedback';
+import { useFullscreen } from '@/hooks/useFullscreen';
 import { TimerCircle } from './TimerCircle';
 import { TimerControls } from './TimerControls';
 import { TimeCard } from './TimeCard';
@@ -10,9 +12,22 @@ import { ResetModal } from './ResetModal';
 import { HeistPresets } from './HeistPresets';
 import { HeistHistoryCard } from './HeistHistoryCard';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 export const HeistTimer = () => {
   const [resetModalOpen, setResetModalOpen] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    const saved = localStorage.getItem('heistSoundEnabled');
+    return saved !== null ? saved === 'true' : true;
+  });
+  
+  const { isFullscreen, toggleFullscreen } = useFullscreen();
+  const { playSetupComplete, playHeistStart, playHeistComplete, playClick } = useAudioFeedback(soundEnabled);
+  
+  // Save sound preference
+  useEffect(() => {
+    localStorage.setItem('heistSoundEnabled', String(soundEnabled));
+  }, [soundEnabled]);
   
   const {
     currentPhase,
@@ -57,10 +72,61 @@ export const HeistTimer = () => {
     setResetModalOpen(false);
   };
 
+  // Handle audio feedback on phase changes
+  const handleStartSetup = () => {
+    playClick();
+    startSetup();
+  };
+
+  const handleCompleteSetup = () => {
+    playSetupComplete();
+    completeSetup();
+  };
+
+  const handleStartHeist = () => {
+    playHeistStart();
+    startHeist();
+  };
+
+  const handleCompleteHeist = () => {
+    playHeistComplete();
+    completeHeist();
+  };
+
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
       {/* Header */}
-      <header className="text-center mb-8 animate-fade-in">
+      <header className="text-center mb-8 animate-fade-in relative">
+        {/* Floating controls */}
+        <div className="absolute right-0 top-0 flex gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setSoundEnabled(!soundEnabled)}
+            className="h-9 w-9"
+            title={soundEnabled ? 'Mute sounds' : 'Enable sounds'}
+          >
+            {soundEnabled ? (
+              <Volume2 className="w-4 h-4" />
+            ) : (
+              <VolumeX className="w-4 h-4 text-muted-foreground" />
+            )}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleFullscreen}
+            className="h-9 w-9"
+            title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+          >
+            {isFullscreen ? (
+              <Minimize className="w-4 h-4" />
+            ) : (
+              <Maximize className="w-4 h-4" />
+            )}
+          </Button>
+        </div>
+        
         <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary via-primary/80 to-accent bg-clip-text text-transparent mb-2">
           Career Challenges
         </h1>
@@ -114,10 +180,10 @@ export const HeistTimer = () => {
           <div className="flex justify-center">
             <TimerControls
               phase={currentPhase}
-              onStartSetup={startSetup}
-              onCompleteSetup={completeSetup}
-              onStartHeist={startHeist}
-              onCompleteHeist={completeHeist}
+              onStartSetup={handleStartSetup}
+              onCompleteSetup={handleCompleteSetup}
+              onStartHeist={handleStartHeist}
+              onCompleteHeist={handleCompleteHeist}
               onReset={handleReset}
             />
           </div>
