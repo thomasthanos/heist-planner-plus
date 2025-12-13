@@ -1,6 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { ChevronDown, ChevronRight, Download, Upload, Clock, XCircle, Wrench } from 'lucide-react';
-import { HeistEntry } from '@/hooks/useHeistTimer';
+import { HeistEntry, SetupEntry } from '@/hooks/useHeistTimer';
 import { Button } from '@/components/ui/button';
 
 interface HeistHistoryCardProps {
@@ -9,6 +9,108 @@ interface HeistHistoryCardProps {
   onExport: () => void;
   onImport: (file: File) => void;
 }
+
+interface FailedSetupsCollapsedProps {
+  failedSetups: SetupEntry[];
+}
+
+const FailedSetupsCollapsed = ({ failedSetups }: FailedSetupsCollapsedProps) => {
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+
+  const groupedSetups = useMemo(() => {
+    const groups: { [key: string]: SetupEntry[] } = {};
+    failedSetups.forEach(setup => {
+      const name = setup.name || 'Failed';
+      if (!groups[name]) groups[name] = [];
+      groups[name].push(setup);
+    });
+    return groups;
+  }, [failedSetups]);
+
+  const toggleGroup = (name: string) => {
+    setExpandedGroups(prev => {
+      const next = new Set(prev);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
+  };
+
+  return (
+    <div>
+      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
+        <XCircle className="w-3 h-3 text-destructive" />
+        Failed Setups ({failedSetups.length})
+      </h4>
+      <div className="space-y-1">
+        {Object.entries(groupedSetups).map(([name, setups]) => (
+          <div key={name}>
+            {setups.length > 1 ? (
+              <>
+                <button
+                  onClick={() => toggleGroup(name)}
+                  className="w-full flex items-center justify-between px-3 py-2 rounded bg-destructive/10 border border-destructive/20 hover:bg-destructive/20 transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    {expandedGroups.has(name) ? (
+                      <ChevronDown className="w-3 h-3 text-destructive" />
+                    ) : (
+                      <ChevronRight className="w-3 h-3 text-destructive/60" />
+                    )}
+                    <span className="text-sm text-muted-foreground truncate max-w-[80px]">
+                      {name}
+                    </span>
+                    <span className="text-xs bg-destructive/20 text-destructive px-1.5 py-0.5 rounded">
+                      x{setups.length}
+                    </span>
+                  </div>
+                  <span className="font-mono text-sm text-destructive">
+                    {setups.reduce((acc, s) => acc + s.time, 0) > 0 
+                      ? formatTimeFromMs(setups.reduce((acc, s) => acc + s.time, 0)) 
+                      : '00:00'}
+                  </span>
+                </button>
+                {expandedGroups.has(name) && (
+                  <div className="ml-4 mt-1 space-y-1 animate-fade-in">
+                    {setups.map((setup, idx) => (
+                      <div
+                        key={setup.id}
+                        className="flex items-center justify-between px-3 py-1.5 rounded bg-destructive/5 border border-destructive/10"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-muted-foreground w-4">{idx + 1}.</span>
+                          <Clock className="w-3 h-3 text-destructive/40" />
+                        </div>
+                        <span className="font-mono text-xs text-destructive">{setup.formatted}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="flex items-center justify-between px-3 py-2 rounded bg-destructive/10 border border-destructive/20">
+                <div className="flex items-center gap-2">
+                  <Clock className="w-3 h-3 text-destructive/60" />
+                  <span className="text-sm text-muted-foreground truncate max-w-[100px]">
+                    {name}
+                  </span>
+                </div>
+                <span className="font-mono text-sm text-destructive">{setups[0].formatted}</span>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const formatTimeFromMs = (ms: number): string => {
+  const totalSeconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+};
 
 export const HeistHistoryCard = ({ heistTimes, formatTime, onExport, onImport }: HeistHistoryCardProps) => {
   const [expandedHeist, setExpandedHeist] = useState<number | null>(null);
@@ -123,30 +225,9 @@ export const HeistHistoryCard = ({ heistTimes, formatTime, onExport, onImport }:
                     </div>
                   )}
 
-                  {/* Failed Setups */}
+                  {/* Failed Setups - Grouped by name */}
                   {entry.failedSetups && entry.failedSetups.length > 0 && (
-                    <div>
-                      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
-                        <XCircle className="w-3 h-3 text-destructive" />
-                        Failed Setups ({entry.failedSetups.length})
-                      </h4>
-                      <div className="space-y-1">
-                        {entry.failedSetups.map((setup) => (
-                          <div
-                            key={setup.id}
-                            className="flex items-center justify-between px-3 py-2 rounded bg-destructive/10 border border-destructive/20"
-                          >
-                            <div className="flex items-center gap-2">
-                              <Clock className="w-3 h-3 text-destructive/60" />
-                              <span className="text-sm text-muted-foreground truncate max-w-[100px]">
-                                {setup.name || 'Failed'}
-                              </span>
-                            </div>
-                            <span className="font-mono text-sm text-destructive">{setup.formatted}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                    <FailedSetupsCollapsed failedSetups={entry.failedSetups} />
                   )}
 
                   {/* Summary */}
