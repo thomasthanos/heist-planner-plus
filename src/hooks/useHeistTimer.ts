@@ -43,15 +43,6 @@ const formatTime = (ms: number): string => {
   const totalSeconds = Math.floor(ms / 1000);
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
-  const centiseconds = Math.floor((ms % 1000) / 10);
-  
-  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${centiseconds.toString().padStart(2, '0')}`;
-};
-
-const formatTimeShort = (ms: number): string => {
-  const totalSeconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
   
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 };
@@ -137,7 +128,7 @@ export const useHeistTimer = () => {
           failedSetupTimes: [
             {
               ...failedSetup,
-              formatted: formatTimeShort(failedSetup.time),
+              formatted: formatTime(failedSetup.time),
             },
             ...prev.failedSetupTimes,
           ],
@@ -161,7 +152,7 @@ export const useHeistTimer = () => {
     const newSetup: SetupEntry = {
       id: Date.now(),
       time: setupDuration,
-      formatted: formatTimeShort(setupDuration),
+      formatted: formatTime(setupDuration),
       timestamp: Date.now(),
       name: state.heistName,
     };
@@ -198,9 +189,9 @@ export const useHeistTimer = () => {
       setupTime: state.setupElapsedTotal,
       heistTime: heistDuration,
       totalTime,
-      formattedSetup: formatTimeShort(state.setupElapsedTotal),
-      formattedHeist: formatTimeShort(heistDuration),
-      formattedTotal: formatTimeShort(totalTime),
+      formattedSetup: formatTime(state.setupElapsedTotal),
+      formattedHeist: formatTime(heistDuration),
+      formattedTotal: formatTime(totalTime),
       timestamp: Date.now(),
       setupDetails: [...state.setupTimes],
       failedSetups: [...state.failedSetupTimes],
@@ -261,7 +252,17 @@ export const useHeistTimer = () => {
     if (state.currentPhase === 'complete') {
       return formatTime(state.heistPhaseTime);
     }
-    return '00:00.00';
+    return '00:00';
+  };
+
+  const getCurrentTime = () => {
+    if (state.currentPhase === 'setup') {
+      return state.currentSetupTime;
+    }
+    if (state.currentPhase === 'heist') {
+      return state.heistPhaseTime;
+    }
+    return 0;
   };
 
   const getProgress = () => {
@@ -306,6 +307,7 @@ export const useHeistTimer = () => {
   return {
     ...state,
     displayTime: getDisplayTime(),
+    currentTime: getCurrentTime(),
     progress: getProgress(),
     startSetup,
     completeSetup,
@@ -313,7 +315,7 @@ export const useHeistTimer = () => {
     completeHeist,
     reset,
     setHeistName,
-    formatTime: formatTimeShort,
+    formatTime,
     exportHeistData,
     importHeistData,
   };

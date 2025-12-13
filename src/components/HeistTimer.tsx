@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Timer, XCircle, BarChart3, Target, Maximize, Minimize, Volume2, VolumeX } from 'lucide-react';
 import { useHeistTimer } from '@/hooks/useHeistTimer';
 import { useAudioFeedback } from '@/hooks/useAudioFeedback';
@@ -22,7 +22,8 @@ export const HeistTimer = () => {
   });
   
   const { isFullscreen, toggleFullscreen } = useFullscreen();
-  const { playSetupComplete, playHeistStart, playHeistComplete, playClick } = useAudioFeedback(soundEnabled);
+  const { playSetupComplete, playHeistStart, playHeistComplete, playClick, playWarning } = useAudioFeedback(soundEnabled);
+  const warningPlayedRef = useRef(false);
   
   // Save sound preference
   useEffect(() => {
@@ -32,6 +33,7 @@ export const HeistTimer = () => {
   const {
     currentPhase,
     displayTime,
+    currentTime,
     progress,
     heistName,
     setupTimes,
@@ -51,6 +53,22 @@ export const HeistTimer = () => {
     exportHeistData,
     importHeistData,
   } = useHeistTimer();
+
+  // Warning at 10 minutes
+  const TEN_MINUTES = 10 * 60 * 1000;
+  useEffect(() => {
+    if (currentTime >= TEN_MINUTES && !warningPlayedRef.current) {
+      playWarning();
+      warningPlayedRef.current = true;
+    }
+    if (currentTime < TEN_MINUTES) {
+      warningPlayedRef.current = false;
+    }
+  }, [currentTime, playWarning]);
+
+  // Flash state for 7+ minutes
+  const SEVEN_MINUTES = 7 * 60 * 1000;
+  const isFlashing = currentTime >= SEVEN_MINUTES;
 
   const status = useMemo(() => {
     switch (currentPhase) {
@@ -173,6 +191,7 @@ export const HeistTimer = () => {
               progress={progress}
               phase={currentPhase}
               status={status}
+              isFlashing={isFlashing}
             />
           </div>
 
@@ -195,7 +214,7 @@ export const HeistTimer = () => {
           <TimeCard icon={<XCircle className="w-5 h-5 text-destructive" />} title="Failed Setups">
             <StatDisplay 
               label="Total Failed Time" 
-              value={failedElapsedTotal > 0 ? formatTime(failedElapsedTotal) : '--:--'}
+              value={failedElapsedTotal > 0 ? formatTime(failedElapsedTotal) : '00:00'}
               variant="destructive"
             />
             <div className="mt-4 space-y-2 max-h-32 overflow-y-auto">
@@ -222,12 +241,12 @@ export const HeistTimer = () => {
               <StatDisplay 
                 label="Current" 
                 value={currentPhase === 'setup' ? formatTime(currentSetupTime) : 
-                       setupTimes[0]?.formatted || '--:--'}
+                       setupTimes[0]?.formatted || '00:00'}
                 variant="primary"
               />
               <StatDisplay 
                 label="Total" 
-                value={setupElapsedTotal > 0 ? formatTime(setupElapsedTotal) : '--:--'}
+                value={setupElapsedTotal > 0 ? formatTime(setupElapsedTotal) : '00:00'}
               />
             </div>
             <div className="space-y-2 max-h-32 overflow-y-auto">
@@ -252,13 +271,13 @@ export const HeistTimer = () => {
             <div className="grid grid-cols-2 gap-3 mb-4">
               <StatDisplay 
                 label="Total" 
-                value={heistTimes[0]?.formattedTotal || '--:--'}
+                value={heistTimes[0]?.formattedTotal || '00:00'}
                 variant="success"
               />
               <StatDisplay 
                 label="Heist Phase" 
                 value={currentPhase === 'heist' ? formatTime(heistPhaseTime) : 
-                       heistTimes[0]?.formattedHeist || '--:--'}
+                       heistTimes[0]?.formattedHeist || '00:00'}
                 variant="warning"
               />
             </div>

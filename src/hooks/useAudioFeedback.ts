@@ -65,10 +65,20 @@ export const useAudioFeedback = (enabled: boolean = true) => {
     vibrate(10);
   }, []);
 
+  const playWarning = useCallback(() => {
+    if (!enabledRef.current) return;
+    // Urgent warning sound at 10 minutes
+    playBeep(880, 0.2, 0.5); // A5
+    setTimeout(() => playBeep(880, 0.2, 0.5), 250);
+    setTimeout(() => playBeep(880, 0.3, 0.5), 500);
+    vibrate([200, 100, 200, 100, 200]);
+  }, []);
+
   return {
     playSetupComplete,
     playHeistStart,
     playHeistComplete,
     playClick,
+    playWarning,
   };
 };

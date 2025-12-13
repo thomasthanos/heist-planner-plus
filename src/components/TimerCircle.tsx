@@ -6,9 +6,10 @@ interface TimerCircleProps {
   progress: number;
   phase: Phase;
   status: string;
+  isFlashing?: boolean;
 }
 
-export const TimerCircle = ({ displayTime, progress, phase, status }: TimerCircleProps) => {
+export const TimerCircle = ({ displayTime, progress, phase, status, isFlashing }: TimerCircleProps) => {
   const circumference = 2 * Math.PI * 90;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
@@ -74,8 +75,9 @@ export const TimerCircle = ({ displayTime, progress, phase, status }: TimerCircl
         <span className={`text-xs font-medium uppercase tracking-widest mb-2 ${statusColor}`}>
           {status}
         </span>
-        <span className={`font-mono text-4xl font-bold tracking-tight ${
-          phase === 'ready' ? 'text-muted-foreground' : 'text-foreground text-glow-primary'
+        <span className={`font-mono text-4xl font-bold tracking-tight transition-all duration-200 ${
+          phase === 'ready' ? 'text-muted-foreground' : 
+          isFlashing ? 'text-destructive text-glow-warning animate-pulse' : 'text-foreground text-glow-primary'
         }`}>
           {displayTime}
         </span>
