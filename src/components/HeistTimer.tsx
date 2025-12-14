@@ -3,6 +3,7 @@ import { Timer, XCircle, BarChart3, Target, Maximize, Minimize, Volume2, VolumeX
 import { useHeistTimer } from '@/hooks/useHeistTimer';
 import { useAudioFeedback } from '@/hooks/useAudioFeedback';
 import { useFullscreen } from '@/hooks/useFullscreen';
+import { useToast } from '@/hooks/use-toast';
 import { TimerCircle } from './TimerCircle';
 import { TimerControls } from './TimerControls';
 import { TimeCard } from './TimeCard';
@@ -22,6 +23,7 @@ export const HeistTimer = () => {
     return saved !== null ? saved === 'true' : true;
   });
   
+  const { toast } = useToast();
   const { isFullscreen, toggleFullscreen } = useFullscreen();
   const { playSetupComplete, playHeistStart, playHeistComplete, playClick, playWarning } = useAudioFeedback(soundEnabled);
   const warningPlayedRef = useRef(false);
@@ -91,23 +93,63 @@ export const HeistTimer = () => {
     setResetModalOpen(false);
   };
 
-  // Handle audio feedback on phase changes
+  // Handle audio feedback on phase changes with validation
   const handleStartSetup = () => {
+    if (!heistName.trim()) {
+      toast({
+        title: "Enter heist name",
+        description: "Please enter a name before starting the setup.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (currentPhase !== 'ready' && currentPhase !== 'heist-ready') {
+      toast({
+        title: "Cannot start setup",
+        description: "Complete the current phase first.",
+        variant: "destructive",
+      });
+      return;
+    }
     playClick();
     startSetup();
   };
 
   const handleCompleteSetup = () => {
+    if (currentPhase !== 'setup') {
+      toast({
+        title: "No active setup",
+        description: "Start a setup first.",
+        variant: "destructive",
+      });
+      return;
+    }
     playSetupComplete();
     completeSetup();
   };
 
   const handleStartHeist = () => {
+    if (currentPhase !== 'heist-ready') {
+      toast({
+        title: "Cannot start heist",
+        description: "Complete your setup first.",
+        variant: "destructive",
+      });
+      return;
+    }
     playHeistStart();
     startHeist();
   };
 
   const handleCompleteHeist = () => {
+    if (currentPhase !== 'heist') {
+      toast({
+        title: "No active heist",
+        description: "Start a heist first.",
+        variant: "destructive",
+      });
+      return;
+    }
     playHeistComplete();
     completeHeist();
   };
