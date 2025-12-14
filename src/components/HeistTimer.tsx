@@ -11,6 +11,7 @@ import { StatDisplay } from './StatDisplay';
 import { ResetModal } from './ResetModal';
 import { HeistPresets } from './HeistPresets';
 import { HeistHistoryCard } from './HeistHistoryCard';
+import { FailedSetupsCollapsedSidebar } from './FailedSetupsCollapsedSidebar';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
@@ -217,16 +218,9 @@ export const HeistTimer = () => {
               value={failedElapsedTotal > 0 ? formatTime(failedElapsedTotal) : '00:00'}
               variant="destructive"
             />
-            <div className="mt-4 space-y-2 max-h-32 overflow-y-auto">
+            <div className="mt-4 space-y-1 max-h-32 overflow-y-auto">
               {failedSetupTimes.length > 0 ? (
-                failedSetupTimes.map((entry) => (
-                  <TimeEntry
-                    key={entry.id}
-                    time={entry.formatted}
-                    name={entry.name}
-                    variant="failed"
-                  />
-                ))
+                <FailedSetupsCollapsedSidebar failedSetups={failedSetupTimes} />
               ) : (
                 <p className="text-center text-sm text-muted-foreground py-4">
                   No failed setups

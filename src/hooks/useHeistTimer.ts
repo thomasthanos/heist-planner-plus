@@ -112,6 +112,9 @@ export const useHeistTimer = () => {
   }, [state.currentPhase]);
 
   const startSetup = useCallback(() => {
+    // Require a heist name to start
+    if (!state.heistName.trim()) return;
+    
     if (state.currentPhase !== 'ready' && state.currentPhase !== 'heist-ready') return;
 
     // Handle failed setup if retrying with same name

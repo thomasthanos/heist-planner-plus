@@ -36,7 +36,7 @@ export const TimerCircle = ({ displayTime, progress, phase, status, isFlashing }
       {/* Outer glow ring */}
       <div className={`absolute w-56 h-56 rounded-full transition-all duration-500 ${
         phase === 'setup' || phase === 'heist' ? 'glow-primary animate-pulse-glow' : ''
-      }`} />
+      } ${isFlashing ? 'warning-blink' : ''}`} />
       
       {/* SVG Timer Ring */}
       <svg 
@@ -77,7 +77,7 @@ export const TimerCircle = ({ displayTime, progress, phase, status, isFlashing }
         </span>
         <span className={`font-mono text-4xl font-bold tracking-tight transition-all duration-200 ${
           phase === 'ready' ? 'text-muted-foreground' : 
-          isFlashing ? 'text-destructive text-glow-warning animate-pulse' : 'text-foreground text-glow-primary'
+          isFlashing ? 'text-destructive' : 'text-foreground text-glow-primary'
         }`}>
           {displayTime}
         </span>
