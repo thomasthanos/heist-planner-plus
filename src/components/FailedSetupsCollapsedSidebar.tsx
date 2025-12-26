@@ -29,55 +29,61 @@ export const FailedSetupsCollapsedSidebar = ({ failedSetups }: FailedSetupsColla
   };
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-2">
       {Object.entries(groupedSetups).map(([name, setups]) => (
         <div key={name}>
           {setups.length > 1 ? (
             <>
               <button
                 onClick={() => toggleGroup(name)}
-                className="w-full flex items-center justify-between px-2 py-1.5 rounded bg-destructive/10 border border-destructive/20 hover:bg-destructive/20 transition-colors text-left"
+                className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-gradient-to-r from-destructive/15 to-destructive/5 border border-destructive/25 transition-colors text-left"
               >
-                <div className="flex items-center gap-1.5">
-                  {expandedGroups.has(name) ? (
-                    <ChevronDown className="w-3 h-3 text-destructive" />
-                  ) : (
-                    <ChevronRight className="w-3 h-3 text-destructive/60" />
-                  )}
-                  <span className="text-xs text-muted-foreground truncate max-w-[60px]">
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center">
+                    {expandedGroups.has(name) ? (
+                      <ChevronDown className="w-3 h-3 text-destructive" />
+                    ) : (
+                      <ChevronRight className="w-3 h-3 text-destructive" />
+                    )}
+                  </div>
+                  <span className="text-sm font-medium text-foreground/80 truncate max-w-[80px]">
                     {name}
                   </span>
-                  <span className="text-[10px] bg-destructive/20 text-destructive px-1 py-0.5 rounded">
-                    x{setups.length}
-                  </span>
                 </div>
+                <span className="text-xs font-bold bg-destructive/25 text-destructive px-2 py-0.5 rounded-full">
+                  {setups.length}
+                </span>
               </button>
               {expandedGroups.has(name) && (
-                <div className="ml-3 mt-1 space-y-0.5 animate-fade-in">
+                <div className="ml-4 mt-2 space-y-1 border-l-2 border-destructive/20 pl-3 animate-fade-in">
                   {setups.map((setup, idx) => (
                     <div
                       key={setup.id}
-                      className="flex items-center justify-between px-2 py-1 rounded bg-destructive/5 border border-destructive/10 text-xs"
+                      className="flex items-center justify-between px-3 py-1.5 rounded-md bg-destructive/5 text-xs"
                     >
-                      <div className="flex items-center gap-1">
-                        <span className="text-muted-foreground w-3">{idx + 1}.</span>
-                        <Clock className="w-2.5 h-2.5 text-destructive/40" />
+                      <div className="flex items-center gap-2">
+                        <span className="w-4 h-4 rounded-full bg-destructive/10 flex items-center justify-center text-[10px] text-destructive/70 font-medium">
+                          {idx + 1}
+                        </span>
+                        <Clock className="w-3 h-3 text-destructive/50" />
                       </div>
-                      <span className="font-mono text-destructive">{setup.formatted}</span>
+                      <span className="font-mono font-semibold text-destructive">{setup.formatted}</span>
                     </div>
                   ))}
                 </div>
               )}
             </>
           ) : (
-            <div className="flex items-center justify-between px-2 py-1.5 rounded bg-destructive/10 border border-destructive/20">
-              <div className="flex items-center gap-1.5">
-                <Clock className="w-3 h-3 text-destructive/60" />
-                <span className="text-xs text-muted-foreground truncate max-w-[80px]">
+            <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-gradient-to-r from-destructive/15 to-destructive/5 border border-destructive/25">
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center">
+                  <Clock className="w-3 h-3 text-destructive" />
+                </div>
+                <span className="text-sm font-medium text-foreground/80 truncate max-w-[100px]">
                   {name}
                 </span>
               </div>
-              <span className="font-mono text-xs text-destructive">{setups[0].formatted}</span>
+              <span className="font-mono text-sm font-semibold text-destructive">{setups[0].formatted}</span>
             </div>
           )}
         </div>
