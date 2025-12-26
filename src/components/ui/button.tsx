@@ -5,22 +5,22 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 btn-3d",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground hover:bg-primary/90 border-b-4 border-primary/50 active:border-b-0 active:mt-1",
+          "bg-gradient-to-b from-primary to-primary/80 text-primary-foreground border-b-4 border-primary/40 hover:from-primary/95 hover:to-primary/75 active:border-b-0 active:translate-y-1",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90 border-b-4 border-destructive/50 active:border-b-0 active:mt-1",
+          "bg-gradient-to-b from-destructive to-destructive/80 text-destructive-foreground border-b-4 border-destructive/40 hover:from-destructive/95 hover:to-destructive/75 active:border-b-0 active:translate-y-1",
         success:
-          "bg-success text-success-foreground hover:bg-success/90 border-b-4 border-success/50 active:border-b-0 active:mt-1",
+          "bg-gradient-to-b from-success to-success/80 text-success-foreground border-b-4 border-success/40 hover:from-success/95 hover:to-success/75 active:border-b-0 active:translate-y-1",
         warning:
-          "bg-warning text-warning-foreground hover:bg-warning/90 border-b-4 border-warning/50 active:border-b-0 active:mt-1",
+          "bg-gradient-to-b from-warning to-warning/80 text-warning-foreground border-b-4 border-warning/40 hover:from-warning/95 hover:to-warning/75 active:border-b-0 active:translate-y-1",
         outline:
-          "border-2 border-border bg-transparent hover:bg-secondary hover:text-secondary-foreground border-b-4 active:border-b-2",
+          "border-2 border-border bg-gradient-to-b from-secondary/50 to-secondary/30 hover:from-secondary/70 hover:to-secondary/50 border-b-4 border-b-border/60 active:border-b-2 active:translate-y-0.5",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80 border-b-4 border-secondary/50 active:border-b-0 active:mt-1",
+          "bg-gradient-to-b from-secondary to-secondary/80 text-secondary-foreground border-b-4 border-secondary/40 hover:from-secondary/95 hover:to-secondary/75 active:border-b-0 active:translate-y-1",
         ghost: "hover:bg-secondary hover:text-secondary-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },

@@ -182,11 +182,11 @@ export const HeistTimer = () => {
 
       <div className="max-w-6xl mx-auto grid gap-6 lg:grid-cols-3">
         {/* Main Timer Card */}
-        <div className="lg:col-span-2 glass rounded-2xl p-6 md:p-8 animate-scale-in border-b-4 border-b-border/60">
+        <div className="lg:col-span-2 glass rounded-2xl p-6 md:p-8 animate-scale-in">
           <div className="flex items-center gap-3 mb-6">
             <Timer className="w-6 h-6 text-primary" />
             <h2 className="text-xl font-semibold">Heist Timer</h2>
-            <span className={`ml-auto px-3 py-1 rounded-full text-xs font-medium badge-3d border-b-2 ${currentPhase === 'ready' ? 'bg-muted text-muted-foreground border-b-muted/50' : currentPhase === 'setup' ? 'bg-primary/20 text-primary border-b-primary/30' : currentPhase === 'heist-ready' ? 'bg-warning/20 text-warning border-b-warning/30' : currentPhase === 'heist' ? 'bg-destructive/20 text-destructive border-b-destructive/30' : 'bg-success/20 text-success border-b-success/30'}`}>
+            <span className={`ml-auto px-3 py-1 rounded-full text-xs font-medium ${currentPhase === 'ready' ? 'bg-muted text-muted-foreground' : currentPhase === 'setup' ? 'bg-primary/20 text-primary' : currentPhase === 'heist-ready' ? 'bg-warning/20 text-warning' : currentPhase === 'heist' ? 'bg-destructive/20 text-destructive' : 'bg-success/20 text-success'}`}>
               {status}
             </span>
           </div>
