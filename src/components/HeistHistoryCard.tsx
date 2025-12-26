@@ -38,64 +38,72 @@ const FailedSetupsCollapsed = ({ failedSetups }: FailedSetupsCollapsedProps) => 
 
   return (
     <div>
-      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
-        <XCircle className="w-3 h-3 text-destructive" />
+      <h4 className="text-xs font-bold text-destructive/80 uppercase tracking-widest mb-3 flex items-center gap-2">
+        <div className="w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center">
+          <XCircle className="w-3 h-3 text-destructive" />
+        </div>
         Failed Setups ({failedSetups.length})
       </h4>
-      <div className="space-y-1">
+      <div className="space-y-2">
         {Object.entries(groupedSetups).map(([name, setups]) => (
           <div key={name}>
             {setups.length > 1 ? (
               <>
                 <button
                   onClick={() => toggleGroup(name)}
-                  className="w-full flex items-center justify-between px-3 py-2 rounded bg-destructive/10 border border-destructive/20 hover:bg-destructive/20 transition-colors"
+                  className="w-full flex items-center justify-between px-3 py-2.5 rounded-xl bg-gradient-to-r from-destructive/15 to-destructive/5 border border-destructive/25 border-b-2 border-b-destructive/40 transition-colors"
                 >
                   <div className="flex items-center gap-2">
-                    {expandedGroups.has(name) ? (
-                      <ChevronDown className="w-3 h-3 text-destructive" />
-                    ) : (
-                      <ChevronRight className="w-3 h-3 text-destructive/60" />
-                    )}
-                    <span className="text-sm text-muted-foreground truncate max-w-[80px]">
+                    <div className="w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center">
+                      {expandedGroups.has(name) ? (
+                        <ChevronDown className="w-3 h-3 text-destructive" />
+                      ) : (
+                        <ChevronRight className="w-3 h-3 text-destructive" />
+                      )}
+                    </div>
+                    <span className="text-sm font-medium text-foreground/80 truncate max-w-[80px]">
                       {name}
                     </span>
-                    <span className="text-xs bg-destructive/20 text-destructive px-1.5 py-0.5 rounded">
-                      x{setups.length}
+                    <span className="text-xs font-bold bg-destructive/25 text-destructive px-2 py-0.5 rounded-full">
+                      {setups.length}
                     </span>
                   </div>
-                  <span className="font-mono text-sm text-destructive">
+                  <span className="font-mono text-sm font-semibold text-destructive">
                     {setups.reduce((acc, s) => acc + s.time, 0) > 0 
                       ? formatTimeFromMs(setups.reduce((acc, s) => acc + s.time, 0)) 
                       : '00:00'}
                   </span>
                 </button>
                 {expandedGroups.has(name) && (
-                  <div className="ml-4 mt-1 space-y-1 animate-fade-in">
+                  <div className="ml-4 mt-2 border-l-2 border-destructive/20 pl-3 space-y-1 animate-fade-in">
                     {setups.map((setup, idx) => (
                       <div
                         key={setup.id}
-                        className="flex items-center justify-between px-3 py-1.5 rounded bg-destructive/5 border border-destructive/10"
+                        className="flex items-center justify-between px-3 py-1.5 rounded-md bg-destructive/5"
                       >
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-muted-foreground w-4">{idx + 1}.</span>
-                          <Clock className="w-3 h-3 text-destructive/40" />
+                          <span className="w-4 h-4 rounded-full bg-destructive/10 flex items-center justify-center text-[10px] text-destructive/70 font-medium">
+                            {idx + 1}
+                          </span>
+                          <Clock className="w-3 h-3 text-destructive/50" />
                         </div>
-                        <span className="font-mono text-xs text-destructive">{setup.formatted}</span>
+                        <span className="font-mono text-xs font-semibold text-destructive">{setup.formatted}</span>
                       </div>
                     ))}
                   </div>
                 )}
               </>
             ) : (
-              <div className="flex items-center justify-between px-3 py-2 rounded bg-destructive/10 border border-destructive/20">
+              <div className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-gradient-to-r from-destructive/15 to-destructive/5 border border-destructive/25 border-b-2 border-b-destructive/40">
                 <div className="flex items-center gap-2">
-                  <Clock className="w-3 h-3 text-destructive/60" />
-                  <span className="text-sm text-muted-foreground truncate max-w-[100px]">
+                  <div className="w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center">
+                    <Clock className="w-3 h-3 text-destructive" />
+                  </div>
+                  <span className="text-sm font-medium text-foreground/80 truncate max-w-[100px]">
                     {name}
                   </span>
                 </div>
-                <span className="font-mono text-sm text-destructive">{setups[0].formatted}</span>
+                <span className="font-mono text-sm font-semibold text-destructive">{setups[0].formatted}</span>
               </div>
             )}
           </div>
@@ -165,31 +173,33 @@ export const HeistHistoryCard = ({ heistTimes, formatTime, onExport, onImport }:
       </div>
 
       {/* Heist list */}
-      <div className="space-y-2 max-h-64 overflow-y-auto">
+      <div className="space-y-3 max-h-64 overflow-y-auto">
         {heistTimes.length > 0 ? (
           heistTimes.map((entry) => (
-            <div key={entry.id} className="rounded-lg overflow-hidden">
+            <div key={entry.id} className="rounded-xl overflow-hidden">
               {/* Heist Header - Clickable */}
               <button
                 onClick={() => toggleExpand(entry.id)}
-                className="w-full p-3 bg-success/10 border border-success/20 rounded-lg hover:bg-success/20 transition-colors text-left"
+                className="w-full p-3 bg-gradient-to-r from-success/15 to-success/5 border border-success/25 border-b-2 border-b-success/40 rounded-xl transition-colors text-left"
               >
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-2">
-                    {expandedHeist === entry.id ? (
-                      <ChevronDown className="w-4 h-4 text-success" />
-                    ) : (
-                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                    )}
-                    <span className="font-medium text-foreground truncate max-w-[120px]">
+                    <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center">
+                      {expandedHeist === entry.id ? (
+                        <ChevronDown className="w-4 h-4 text-success" />
+                      ) : (
+                        <ChevronRight className="w-4 h-4 text-success/70" />
+                      )}
+                    </div>
+                    <span className="font-semibold text-foreground truncate max-w-[120px]">
                       {entry.name}
                     </span>
                   </div>
-                  <span className="font-mono font-bold text-success">
+                  <span className="font-mono font-bold text-lg text-success">
                     {entry.formattedTotal}
                   </span>
                 </div>
-                <div className="flex justify-between text-xs text-muted-foreground pl-6">
+                <div className="flex justify-between text-xs text-muted-foreground pl-8">
                   <span>Setup: {entry.formattedSetup}</span>
                   <span>Heist: {entry.formattedHeist}</span>
                 </div>
@@ -197,28 +207,32 @@ export const HeistHistoryCard = ({ heistTimes, formatTime, onExport, onImport }:
 
               {/* Expanded Details */}
               {expandedHeist === entry.id && (
-                <div className="mt-1 p-3 bg-secondary/30 rounded-lg border border-border/30 animate-fade-in space-y-3">
+                <div className="mt-2 p-4 bg-gradient-to-b from-secondary/40 to-secondary/20 rounded-xl border border-border/40 animate-fade-in space-y-4">
                   {/* Setup Details */}
                   {entry.setupDetails && entry.setupDetails.length > 0 && (
                     <div>
-                      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
-                        <Wrench className="w-3 h-3" />
+                      <h4 className="text-xs font-bold text-primary/80 uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center">
+                          <Wrench className="w-3 h-3 text-primary" />
+                        </div>
                         Setups ({entry.setupDetails.length})
                       </h4>
-                      <div className="space-y-1">
+                      <div className="space-y-2">
                         {entry.setupDetails.map((setup, index) => (
                           <div
                             key={setup.id}
-                            className="flex items-center justify-between px-3 py-2 rounded bg-primary/10 border border-primary/20"
+                            className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-gradient-to-r from-primary/15 to-primary/5 border border-primary/25 border-b-2 border-b-primary/40"
                           >
                             <div className="flex items-center gap-2">
-                              <span className="text-xs text-muted-foreground w-4">{index + 1}.</span>
+                              <span className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-[10px] text-primary font-bold">
+                                {index + 1}
+                              </span>
                               <Clock className="w-3 h-3 text-primary/60" />
-                              <span className="text-sm text-foreground truncate max-w-[100px]">
+                              <span className="text-sm font-medium text-foreground/80 truncate max-w-[100px]">
                                 {setup.name || 'Setup'}
                               </span>
                             </div>
-                            <span className="font-mono text-sm text-primary">{setup.formatted}</span>
+                            <span className="font-mono text-sm font-semibold text-primary">{setup.formatted}</span>
                           </div>
                         ))}
                       </div>
@@ -231,18 +245,18 @@ export const HeistHistoryCard = ({ heistTimes, formatTime, onExport, onImport }:
                   )}
 
                   {/* Summary */}
-                  <div className="pt-2 border-t border-border/30">
-                    <div className="grid grid-cols-3 gap-2 text-center">
-                      <div>
-                        <p className="text-xs text-muted-foreground">Total Setup</p>
-                        <p className="font-mono text-sm text-primary">{entry.formattedSetup}</p>
+                  <div className="pt-3 border-t border-border/30">
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="text-center p-2 rounded-lg bg-primary/10 border border-primary/20">
+                        <p className="text-[10px] font-bold text-primary/70 uppercase tracking-wider mb-1">Total Setup</p>
+                        <p className="font-mono text-sm font-bold text-primary">{entry.formattedSetup}</p>
                       </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground">Heist</p>
-                        <p className="font-mono text-sm text-warning">{entry.formattedHeist}</p>
+                      <div className="text-center p-2 rounded-lg bg-warning/10 border border-warning/20">
+                        <p className="text-[10px] font-bold text-warning/70 uppercase tracking-wider mb-1">Heist</p>
+                        <p className="font-mono text-sm font-bold text-warning">{entry.formattedHeist}</p>
                       </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground">Total</p>
+                      <div className="text-center p-2 rounded-lg bg-success/10 border border-success/20">
+                        <p className="text-[10px] font-bold text-success/70 uppercase tracking-wider mb-1">Total</p>
                         <p className="font-mono text-sm font-bold text-success">{entry.formattedTotal}</p>
                       </div>
                     </div>
@@ -252,7 +266,7 @@ export const HeistHistoryCard = ({ heistTimes, formatTime, onExport, onImport }:
             </div>
           ))
         ) : (
-          <p className="text-center text-sm text-muted-foreground py-4">
+          <p className="text-center text-sm text-muted-foreground py-6">
             No heists completed
           </p>
         )}
