@@ -32,11 +32,9 @@ export const TimerCircle = ({ displayTime, progress, phase, status, isFlashing }
   }, [phase]);
 
   return (
-    <div className="relative flex items-center justify-center">
-      {/* Outer glow ring */}
-      <div className={`absolute w-56 h-56 rounded-full transition-all duration-500 ${
-        phase === 'setup' || phase === 'heist' ? 'glow-primary animate-pulse-glow' : ''
-      } ${isFlashing ? 'warning-blink' : ''}`} />
+    <div className="relative flex items-center justify-center timer-3d">
+      {/* Outer ring with 3D border */}
+      <div className={`absolute w-56 h-56 rounded-full transition-all duration-500 border-4 border-border/30 border-b-8 border-b-border/50 ${isFlashing ? 'warning-blink' : ''}`} />
       
       {/* SVG Timer Ring */}
       <svg 
@@ -77,7 +75,7 @@ export const TimerCircle = ({ displayTime, progress, phase, status, isFlashing }
         </span>
         <span className={`font-mono text-4xl font-bold tracking-tight transition-all duration-200 ${
           phase === 'ready' ? 'text-muted-foreground' : 
-          isFlashing ? 'text-destructive' : 'text-foreground text-glow-primary'
+          isFlashing ? 'text-destructive' : 'text-foreground'
         }`}>
           {displayTime}
         </span>

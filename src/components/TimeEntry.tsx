@@ -20,7 +20,7 @@ export const TimeEntry = ({ time, name, variant = 'default' }: TimeEntryProps) =
   }[variant];
 
   return (
-    <div className={`flex items-center justify-between px-4 py-3 rounded-lg border ${bgClass} transition-colors hover:brightness-110`}>
+    <div className={`flex items-center justify-between px-4 py-3 rounded-lg border border-b-4 ${bgClass} transition-all hover:translate-x-1 entry-3d`}>
       <div className="flex items-center gap-3">
         <Clock className={`w-4 h-4 ${textClass} opacity-60`} />
         {name && <span className="text-sm text-muted-foreground truncate max-w-[120px]">{name}</span>}
