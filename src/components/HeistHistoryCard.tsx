@@ -246,17 +246,17 @@ export const HeistHistoryCard = ({ heistTimes, formatTime, onExport, onImport }:
 
                   {/* Summary */}
                   <div className="pt-3 border-t border-border/30">
-                    <div className="grid grid-cols-3 gap-2">
-                      <div className="text-center p-2 rounded-lg bg-primary/10 border border-primary/20">
-                        <p className="text-[10px] font-bold text-primary/70 uppercase tracking-wider mb-1">Total Setup</p>
-                        <p className="font-mono text-sm font-bold text-primary">{entry.formattedSetup}</p>
+                    <div className="grid grid-cols-3 gap-3 text-center">
+                      <div>
+                        <p className="text-[10px] text-muted-foreground uppercase mb-1">Setup</p>
+                        <p className="font-mono text-sm text-primary">{entry.formattedSetup}</p>
                       </div>
-                      <div className="text-center p-2 rounded-lg bg-warning/10 border border-warning/20">
-                        <p className="text-[10px] font-bold text-warning/70 uppercase tracking-wider mb-1">Heist</p>
-                        <p className="font-mono text-sm font-bold text-warning">{entry.formattedHeist}</p>
+                      <div>
+                        <p className="text-[10px] text-muted-foreground uppercase mb-1">Heist</p>
+                        <p className="font-mono text-sm text-warning">{entry.formattedHeist}</p>
                       </div>
-                      <div className="text-center p-2 rounded-lg bg-success/10 border border-success/20">
-                        <p className="text-[10px] font-bold text-success/70 uppercase tracking-wider mb-1">Total</p>
+                      <div>
+                        <p className="text-[10px] text-muted-foreground uppercase mb-1">Total</p>
                         <p className="font-mono text-sm font-bold text-success">{entry.formattedTotal}</p>
                       </div>
                     </div>
