@@ -42,37 +42,41 @@ export const HeistPresets = ({ onSelectName }: HeistPresetsProps) => {
 
   return (
     <div className="glass rounded-xl p-4 animate-fade-in">
-      <h3 className="text-sm font-semibold text-muted-foreground mb-3 uppercase tracking-wider">
+      <h3 className="text-xs font-bold text-muted-foreground mb-4 uppercase tracking-widest">
         Heist Presets
       </h3>
-      <div className="space-y-2">
+      <div className="space-y-3">
         {presets.map((preset) => (
-          <div key={preset.name} className="rounded-lg overflow-hidden">
+          <div key={preset.name} className="rounded-xl overflow-hidden">
             {/* Heist Header */}
             <button
               onClick={() => toggleExpand(preset.name)}
-              className="w-full flex items-center gap-2 p-3 bg-secondary/50 hover:bg-secondary/80 transition-colors text-left"
+              className="w-full flex items-center gap-3 p-3 bg-gradient-to-r from-secondary/70 to-secondary/40 border-2 border-border/40 border-b-4 border-b-border/60 rounded-xl transition-colors text-left"
             >
-              {expandedHeist === preset.name ? (
-                <ChevronDown className="w-4 h-4 text-primary flex-shrink-0" />
-              ) : (
-                <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-              )}
-              <span className="font-medium text-foreground">{preset.name}</span>
+              <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center">
+                {expandedHeist === preset.name ? (
+                  <ChevronDown className="w-4 h-4 text-primary" />
+                ) : (
+                  <ChevronRight className="w-4 h-4 text-primary/60" />
+                )}
+              </div>
+              <span className="font-semibold text-foreground">{preset.name}</span>
             </button>
 
             {/* Expanded Content */}
             {expandedHeist === preset.name && (
-              <div className="bg-secondary/30 p-2 space-y-1 animate-fade-in">
+              <div className="mt-2 ml-4 border-l-2 border-primary/30 pl-4 space-y-2 animate-fade-in py-2">
                 {/* Setups */}
                 {preset.setups.map((setup, index) => (
                   <button
                     key={setup}
                     onClick={() => handleSelect(setup)}
-                    className="w-full flex items-center gap-2 p-2 pl-8 rounded hover:bg-primary/20 transition-colors text-left group"
+                    className="w-full flex items-center gap-3 p-2.5 rounded-lg bg-gradient-to-r from-secondary/50 to-transparent border border-border/30 border-b-2 border-b-border/50 transition-colors text-left group"
                   >
-                    <Wrench className="w-3 h-3 text-primary/60 group-hover:text-primary flex-shrink-0" />
-                    <span className="text-sm text-muted-foreground group-hover:text-foreground">
+                    <div className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center">
+                      <Wrench className="w-3 h-3 text-primary/70 group-hover:text-primary" />
+                    </div>
+                    <span className="text-sm text-foreground/70 group-hover:text-foreground">
                       {index + 1}. {setup}
                     </span>
                   </button>
@@ -81,11 +85,13 @@ export const HeistPresets = ({ onSelectName }: HeistPresetsProps) => {
                 {/* Final Heist */}
                 <button
                   onClick={() => handleSelect(preset.finalHeist)}
-                  className="w-full flex items-center gap-2 p-2 pl-8 rounded hover:bg-success/20 transition-colors text-left group mt-2 border-t border-border/30 pt-3"
+                  className="w-full flex items-center gap-3 p-2.5 rounded-lg bg-gradient-to-r from-success/20 to-success/5 border border-success/30 border-b-2 border-b-success/50 transition-colors text-left group mt-3"
                 >
-                  <Target className="w-3 h-3 text-success/60 group-hover:text-success flex-shrink-0" />
+                  <div className="w-5 h-5 rounded-full bg-success/20 flex items-center justify-center">
+                    <Target className="w-3 h-3 text-success" />
+                  </div>
                   <span className="text-sm font-medium text-success/80 group-hover:text-success">
-                    Heist: {preset.finalHeist}
+                    {preset.finalHeist}
                   </span>
                 </button>
               </div>
