@@ -65,21 +65,23 @@ export const HeistTimer = () => {
     importHeistData
   } = useHeistTimer();
 
-  // Warning at 10 minutes
+  // Warning at 10 minutes - only when timer is running
   const TEN_MINUTES = 10 * 60 * 1000;
+  const isTimerRunning = currentPhase === 'setup' || currentPhase === 'heist';
+  
   useEffect(() => {
-    if (currentTime >= TEN_MINUTES && !warningPlayedRef.current) {
+    if (isTimerRunning && currentTime >= TEN_MINUTES && !warningPlayedRef.current) {
       playWarning();
       warningPlayedRef.current = true;
     }
     if (currentTime < TEN_MINUTES) {
       warningPlayedRef.current = false;
     }
-  }, [currentTime, playWarning]);
+  }, [currentTime, playWarning, isTimerRunning]);
 
-  // Flash state for 7+ minutes
+  // Flash state for 7+ minutes - only when timer is running
   const SEVEN_MINUTES = 7 * 60 * 1000;
-  const isFlashing = currentTime >= SEVEN_MINUTES;
+  const isFlashing = isTimerRunning && currentTime >= SEVEN_MINUTES;
   const status = useMemo(() => {
     switch (currentPhase) {
       case 'ready':
