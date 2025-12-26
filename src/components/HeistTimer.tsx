@@ -165,7 +165,7 @@ export const HeistTimer = () => {
   };
   return <div className="min-h-screen bg-background p-4 md:p-8">
       {/* Header */}
-      <header className="text-center mb-8 animate-fade-in relative">
+      <header className="text-center mb-10 animate-fade-in relative">
         {/* Floating controls */}
         <div className="absolute right-0 top-0 flex gap-2">
           <Button variant="ghost" size="icon" onClick={() => setSoundEnabled(!soundEnabled)} className="h-9 w-9" title={soundEnabled ? 'Mute sounds' : 'Enable sounds'}>
@@ -176,10 +176,21 @@ export const HeistTimer = () => {
           </Button>
         </div>
         
-        <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary via-primary/80 to-accent bg-clip-text text-transparent mb-2">
-          Career Challenges
+        <div className="inline-block mb-3">
+          <div className="px-4 py-1.5 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 border-b-2 border-b-primary/40">
+            <span className="text-xs font-bold uppercase tracking-widest text-primary">GTA Online</span>
+          </div>
+        </div>
+        
+        <h1 className="text-4xl md:text-5xl font-bold mb-3">
+          <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+            Career Challenges
+          </span>
         </h1>
-        <p className="text-muted-foreground">Heist Timer & Progress Tracker</p>
+        
+        <p className="text-muted-foreground text-sm font-medium tracking-wide">
+          Heist Timer & Progress Tracker
+        </p>
       </header>
 
       <div className="max-w-6xl mx-auto grid gap-6 lg:grid-cols-3">
